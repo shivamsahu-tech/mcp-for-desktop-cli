@@ -1,0 +1,8 @@
+{
+    "mcpServers": {
+      "ubuntu_desktop" : {
+        "command": "node",
+        "args": ["C:\\Users\\rajub\\mcp-dektop\\mcp_desktop\\src\\index.js"]
+      }
+    }
+  }
