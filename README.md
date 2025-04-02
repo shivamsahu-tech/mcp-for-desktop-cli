@@ -98,19 +98,48 @@ Update the MCP registration file path:
 
 ### Example conversation with Claude:
 
-**User:** Can you check the disk space on my Ubuntu system?
+**User:** I'm having issues with a Docker container that keeps crashing. Can you help me diagnose the problem?
 
-**Claude:** I'll check the disk space on your Ubuntu system.
+**Claude:** I'll help you diagnose your Docker container issue. Let me check what containers are running and their status.
 
-**Command:** `df -h`
+**Command:** `docker ps -a`
 
 **Output:**
 ```
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/sda1        98G   45G   48G  49% /
-tmpfs           3.9G     0  3.9G   0% /dev/shm
-...
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS                      PORTS                    NAMES
+3a7d5c2e1f23   nginx:latest   "/docker-entrypoint.…"   5 minutes ago    Exited (1) 2 minutes ago                            web-server
+8bce45f98a12   mysql:8.0      "docker-entrypoint.s…"   12 minutes ago   Up 12 minutes               3306/tcp, 33060/tcp      db
+f1e2d3c4b5a6   redis:alpine   "docker-entrypoint.s…"   2 hours ago      Up 2 hours                  6379/tcp                 cache
 ```
+
+**Claude:** I see the nginx container "web-server" has exited with error code 1. Let's check the logs to see what happened.
+
+**Command:** `docker logs 3a7d5c2e1f23`
+
+**Output:**
+```
+2025/04/02 10:15:42 [emerg] 1#1: cannot load certificate "/etc/nginx/ssl/nginx.crt": BIO_new_file() failed (SSL: error:02001002:system library:fopen:No such file or directory:fopen('/etc/nginx/ssl/nginx.crt','r') error:2006D080:BIO routines:BIO_new_file:no such file)
+nginx: [emerg] cannot load certificate "/etc/nginx/ssl/nginx.crt": BIO_new_file() failed (SSL: error:02001002:system library:fopen:No such file or directory:fopen('/etc/nginx/ssl/nginx.crt','r') error:2006D080:BIO routines:BIO_new_file:no such file)
+```
+
+**Claude:** I found the issue! Your nginx container is failing because it's trying to load SSL certificates that don't exist. Let me fix that by creating a simple configuration without SSL requirements.
+
+**Command:** `docker run --name web-server -d -p 80:80 nginx:latest`
+
+**Output:**
+```
+4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z
+```
+
+**Claude:** Great! The container should now be running without requiring SSL. Let me verify that it's working properly.
+
+**Command:** `docker ps | grep web-server`
+
+**Output:**
+```
+4d5e6f7g8h9i   nginx:latest   "/docker-entrypoint.…"   12 seconds ago   Up 10 seconds   0.0.0.0:80->80/tcp   web-server
+```
+
 
 ## Security Considerations
 
